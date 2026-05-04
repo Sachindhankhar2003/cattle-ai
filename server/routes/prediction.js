@@ -7,6 +7,7 @@ const fs = require('fs');
 const FormData = require('form-data');
 const Prediction = require('../models/Prediction');
 const auth = require('../middleware/auth');
+const crypto = require('crypto');
 
 // Multer Config
 const storage = multer.diskStorage({
@@ -31,26 +32,50 @@ const upload = multer({
     }
 });
 
-// @route   POST api/prediction/predict
+// @route   POST api/prediction/predict/:species
 // @desc    Upload image and get prediction
-router.post('/predict', [auth, upload.single('image')], async (req, res) => {
+router.post('/predict/:species', [auth, upload.single('image')], async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ msg: 'No image uploaded' });
+        
+        const species = req.params.species;
+        if (species !== 'cattle' && species !== 'buffalo') {
+            return res.status(400).json({ msg: 'Invalid species' });
+        }
 
         const imagePath = req.file.path;
+        const fileBuffer = fs.readFileSync(imagePath);
+        const imageHash = crypto.createHash('md5').update(fileBuffer).digest('hex');
+
+        // Check if image Hash exists
+        const existingPrediction = await Prediction.findOne({ imageHash: imageHash });
+
+        if (existingPrediction) {
+            console.log("Image found in cache, but bypassing to force new AI prediction.");
+            // Delete the old wrong prediction from the database so it can be replaced
+            await Prediction.deleteOne({ _id: existingPrediction._id });
+        }
         
         // Prepare data for Python AI service
         const formData = new FormData();
         formData.append('image', fs.createReadStream(imagePath));
 
         // Call Python Flask API
-        const response = await axios.post('http://localhost:8000/predict', formData, {
+        const response = await axios.post(`http://localhost:8000/predict/${species}`, formData, {
             headers: {
                 ...formData.getHeaders()
             }
         });
 
-        const { prediction, confidence, top3, info } = response.data;
+        const { prediction, confidence, top3, info, heatmap, quality } = response.data;
+
+        let heatmapUrl = '';
+        if (heatmap) {
+            const base64Data = heatmap.replace(/^data:image\/\w+;base64,/, "");
+            const heatmapName = `heatmap_${Date.now()}.jpg`;
+            require('fs').writeFileSync(`./uploads/${heatmapName}`, base64Data, 'base64');
+            heatmapUrl = `/uploads/${heatmapName}`;
+        }
 
         const newPrediction = new Prediction({
             userId: req.user.id,
@@ -59,7 +84,10 @@ router.post('/predict', [auth, upload.single('image')], async (req, res) => {
             breed: prediction,
             confidence: confidence,
             top3: top3,
-            metadata: info
+            metadata: info,
+            heatmapUrl: heatmapUrl,
+            imageHash: imageHash,
+            imageQuality: quality
         });
 
         await newPrediction.save();

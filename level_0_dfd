@@ -1,0 +1,15 @@
+// Level 0 DFD - Cattle AI System
+digraph {
+	rankdir=LR size="8,5"
+	User [label="Farmer / User" fillcolor="#AED6F1" fontname=Arial shape=box style=filled]
+	System [label="Cattle AI System
+(Breed Recognition)" fillcolor="#A9DFBF" fontname=Arial shape=circle style=filled]
+	DB [label="Database
+(MongoDB)" fillcolor="#F9E79F" fontname=Arial shape=cylinder style=filled]
+	User -> System [label=" Uploads Image
+ Auth Data" fontname=Arial fontsize=10]
+	System -> User [label=" Returns Prediction
+ & Metadata" fontname=Arial fontsize=10]
+	System -> DB [label=" Saves Data" fontname=Arial fontsize=10]
+	DB -> System [label=" Retrieves Data" fontname=Arial fontsize=10]
+}

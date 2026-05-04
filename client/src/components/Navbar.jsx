@@ -17,13 +17,13 @@ const Navbar = ({ user, logout }) => {
   };
 
   return (
-    <nav className="glass-morphism sticky top-0 z-50 py-4 px-6 border-b border-white/5">
+    <nav className="bg-gradient-to-r from-emerald-500 to-blue-600 sticky top-0 z-50 py-4 px-6 shadow-xl">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center space-x-3 group">
           <div className="relative w-10 h-10 flex-shrink-0">
-            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative bg-slate-900 p-2 rounded-xl border border-white/10 group-hover:border-emerald-500/50 transition-colors flex items-center justify-center h-full w-full">
-              <svg className="w-full h-full text-emerald-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="absolute -inset-1 bg-white rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-white p-2 rounded-xl shadow-sm transition-colors flex items-center justify-center h-full w-full">
+              <svg className="w-full h-full text-emerald-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 10C4 10 4 15 12 15C20 15 20 10 20 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 <path d="M7 6C7 6 7 4 5 4C3 4 3 8 3 8C3 8 3 10 7 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 <path d="M17 6C17 6 17 4 19 4C21 4 21 8 21 8C21 8 21 10 17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -34,10 +34,10 @@ const Navbar = ({ user, logout }) => {
             </div>
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors">
-              Cattle<span className="text-emerald-500">AI</span>
+            <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-100 transition-colors">
+              🐄 Cattle<span className="text-emerald-200">AI</span> ✨
             </span>
-            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-slate-500 -mt-1">
+            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-emerald-100 -mt-1 drop-shadow-sm">
               Breed Recognition
             </span>
           </div>
@@ -46,15 +46,15 @@ const Navbar = ({ user, logout }) => {
         {user ? (
           <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-6">
-              <Link to="/" className="flex items-center space-x-2 text-sm font-medium text-slate-400 hover:text-emerald-400 transition-all">
+              <Link to="/" className="flex items-center space-x-2 text-sm font-medium text-emerald-50 hover:text-white transition-all">
                 <LayoutDashboard size={18} />
                 <span className="hidden md:inline">{t('Dashboard')}</span>
               </Link>
-              <Link to="/history" className="flex items-center space-x-2 text-sm font-medium text-slate-400 hover:text-emerald-400 transition-all">
+              <Link to="/history" className="flex items-center space-x-2 text-sm font-medium text-emerald-50 hover:text-white transition-all">
                 <History size={18} />
                 <span className="hidden md:inline">{t('History')}</span>
               </Link>
-              <Link to="/encyclopedia" className="flex items-center space-x-2 text-sm font-medium text-slate-400 hover:text-emerald-400 transition-all">
+              <Link to="/encyclopedia" className="flex items-center space-x-2 text-sm font-medium text-emerald-50 hover:text-white transition-all">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
                 <span className="hidden md:inline">{t('Encyclopedia')}</span>
               </Link>

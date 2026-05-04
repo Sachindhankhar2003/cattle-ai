@@ -3,12 +3,36 @@ import { Upload, X, ImageIcon, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 
-const UploadSection = ({ onPredictionStart, onPredictionSuccess }) => {
+const UploadSection = ({ onPredictionStart, onPredictionSuccess, onPredictionError, species = 'cattle', themeColor = 'emerald' }) => {
   const [dragActive, setDragActive] = useState(false);
   const [previews, setPreviews] = useState([]);
   const [files, setFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  // Dynamic colors based on theme
+  const getThemeClasses = () => {
+    if (themeColor === 'orange') {
+      return {
+        borderActive: 'border-orange-500 bg-orange-50',
+        borderHover: 'hover:border-orange-400 hover:bg-orange-50',
+        textMain: 'text-orange-600',
+        bgLight: 'bg-orange-100',
+        btnGradient: 'bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-orange-500/40',
+        focusRing: 'focus:ring-orange-500'
+      };
+    }
+    return {
+      borderActive: 'border-emerald-500 bg-emerald-50',
+      borderHover: 'hover:border-emerald-400 hover:bg-emerald-50',
+      textMain: 'text-emerald-600',
+      bgLight: 'bg-emerald-100',
+      btnGradient: 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:shadow-emerald-500/40',
+      focusRing: 'focus:ring-emerald-500'
+    };
+  };
+
+  const theme = getThemeClasses();
 
   const handleDrag = useCallback((e) => {
     e.preventDefault();
@@ -88,14 +112,15 @@ const UploadSection = ({ onPredictionStart, onPredictionSuccess }) => {
     
     try {
       let lastData = null;
+      let lastError = null;
+      
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const formData = new FormData();
-        // Ensure browser sets filename properly with an extension for multer
         const filename = file.name && file.name.includes('.') ? file.name : `capture_${Date.now()}.jpg`;
         formData.append('image', file, filename);
 
-        const response = await fetch('/api/prediction/predict', {
+        const response = await fetch(`/api/prediction/predict/${species}`, {
           method: 'POST',
           headers: { 'x-auth-token': token },
           body: formData
@@ -108,13 +133,18 @@ const UploadSection = ({ onPredictionStart, onPredictionSuccess }) => {
           const errText = await response.text();
           let errObj = {};
           try { errObj = JSON.parse(errText); } catch(e) {}
+          
+          lastError = errObj;
           const msg = errObj.trace ? `Python crash: ${errObj.error}` : errObj.error || errObj.msg || errText.substring(0, 50);
           console.error('Failed to upload file', errText);
           toast.error(`Upload failed: ${msg}`);
+          break;
         }
       }
 
-      if (lastData) {
+      if (lastError) {
+        if (onPredictionError) onPredictionError(lastError);
+      } else if (lastData) {
         onPredictionSuccess(lastData);
       } else {
         toast.error('Prediction failed, no valid response.');
@@ -129,10 +159,10 @@ const UploadSection = ({ onPredictionStart, onPredictionSuccess }) => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full mx-auto">
       <div 
-        className={`relative p-8 border-2 border-dashed rounded-2xl transition-all duration-300 ${
-          dragActive ? 'border-emerald-500 bg-emerald-500/5' : 'border-slate-700 hover:border-slate-600'
+        className={`relative p-8 bg-white border-2 border-dashed rounded-2xl transition-all duration-300 shadow-sm ${
+          dragActive ? theme.borderActive : `border-gray-300 ${theme.borderHover}`
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -141,7 +171,7 @@ const UploadSection = ({ onPredictionStart, onPredictionSuccess }) => {
       >
         {previews.length === 0 ? (
           <div className="flex flex-col md:flex-row gap-4 w-full h-full justify-center">
-            <label className="relative flex-grow p-8 text-center border border-slate-700 hover:border-emerald-500 hover:bg-emerald-500/5 rounded-2xl cursor-pointer transition-colors group">
+            <label className={`relative flex-grow p-8 text-center border border-gray-200 rounded-2xl cursor-pointer transition-colors group ${theme.borderHover}`}>
               <input 
                 type="file" 
                 multiple
@@ -149,14 +179,14 @@ const UploadSection = ({ onPredictionStart, onPredictionSuccess }) => {
                 onChange={handleChange}
                 accept="image/*"
               />
-              <div className="bg-emerald-500/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <Upload className="text-emerald-500" size={24} />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Upload Cattle Images</h3>
-              <p className="text-xs text-slate-400">Drag & drop or select multiple</p>
+              <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 6, ease: "linear" }} className={`${theme.bgLight} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-sm`}>
+                <Upload className={theme.textMain} size={24} />
+              </motion.div>
+              <h3 className="text-xl font-semibold mb-2 text-slate-800">Upload {species === 'buffalo' ? 'Buffalo' : 'Cattle'} Images</h3>
+              <p className="text-xs text-slate-500">Drag & drop or select multiple</p>
             </label>
             
-            <label className="relative flex-grow p-8 text-center border border-slate-700 hover:border-emerald-500 hover:bg-emerald-500/5 rounded-2xl cursor-pointer transition-colors group">
+            <label className={`relative flex-grow p-8 text-center border border-gray-200 rounded-2xl cursor-pointer transition-colors group ${theme.borderHover}`}>
                <input 
                 type="file" 
                 capture="environment"
@@ -164,27 +194,27 @@ const UploadSection = ({ onPredictionStart, onPredictionSuccess }) => {
                 onChange={handleChange}
                 accept="image/*"
               />
-              <div className="bg-teal-500/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-500"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-1">Take Photo</h3>
-              <p className="text-xs text-slate-400">Use device camera</p>
+              <motion.div animate={{ rotate: -360 }} transition={{ repeat: Infinity, duration: 6, ease: "linear" }} className={`${theme.bgLight} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-sm`}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={theme.textMain}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+              </motion.div>
+              <h3 className="text-lg font-semibold mb-1 text-slate-800">Take Photo</h3>
+              <p className="text-xs text-slate-500">Use device camera</p>
             </label>
           </div>
         ) : (
           <div className="relative z-20">
-            <h3 className="text-lg font-medium text-emerald-400 mb-4">{previews.length} File{previews.length > 1 ? 's' : ''} Selected</h3>
+            <h3 className={`text-lg font-medium ${theme.textMain} mb-4`}>{previews.length} File{previews.length > 1 ? 's' : ''} Selected</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
               {previews.map((preview, idx) => (
                 <motion.div 
                   key={idx}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="relative rounded-xl overflow-hidden shadow-lg border border-white/5 group"
+                  className="relative rounded-xl overflow-hidden shadow-md border border-gray-200 group"
                 >
                   <button 
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeImage(idx); }}
-                    className="absolute top-2 right-2 p-1 bg-red-500/80 text-white rounded-full hover:bg-red-600 shadow z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md z-10 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <X size={14} />
                   </button>
@@ -208,7 +238,7 @@ const UploadSection = ({ onPredictionStart, onPredictionSuccess }) => {
             <button 
               onClick={handleUpload}
               disabled={isUploading}
-              className="btn-primary w-full py-4 flex items-center justify-center space-x-2 disabled:bg-slate-700 disabled:cursor-not-allowed text-lg"
+              className={`w-full py-4 flex items-center justify-center space-x-2 text-white font-bold rounded-xl shadow-xl hover:-translate-y-1 transition-all duration-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:hover:translate-y-0 text-lg ${theme.btnGradient}`}
             >
               {isUploading ? (
                 <>
@@ -217,8 +247,7 @@ const UploadSection = ({ onPredictionStart, onPredictionSuccess }) => {
                 </>
               ) : (
                 <>
-                  <ImageIcon size={20} />
-                  <span>{files.length > 1 ? 'Batch Analyze' : 'Identify Breed'}</span>
+                  <span>🔍 {files.length > 1 ? 'Batch Analyze' : `Identify ${species === 'buffalo' ? 'Buffalo' : 'Cattle'} Breed`}</span>
                 </>
               )}
             </button>

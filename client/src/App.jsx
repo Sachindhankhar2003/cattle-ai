@@ -34,7 +34,7 @@ function App() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-emerald-500"></div>
     </div>
   );
@@ -43,8 +43,8 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-slate-950 text-slate-100 transition-colors duration-300">
-        <Toaster position="top-right" toastOptions={{ style: { background: '#1e293b', color: '#fff' } }} />
+      <div className="min-h-screen bg-gray-50 text-slate-800 transition-colors duration-300">
+        <Toaster position="top-right" toastOptions={{ style: { background: '#ffffff', color: '#1e293b', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' } }} />
         {!isAuthPage && <Navbar user={user} logout={logout} />}
         <div className={!isAuthPage ? "container mx-auto px-4 mt-8 pb-12" : ""}>
           <Routes>

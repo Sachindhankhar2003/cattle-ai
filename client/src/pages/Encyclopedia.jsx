@@ -33,11 +33,11 @@ const Encyclopedia = () => {
   return (
     <div className="max-w-7xl mx-auto space-y-12">
       <header className="text-center space-y-4 pt-8">
-        <div className="inline-flex items-center space-x-2 bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20 text-emerald-400 font-bold text-sm tracking-widest uppercase">
+        <div className="inline-flex items-center space-x-2 bg-emerald-100 px-4 py-2 rounded-full border border-emerald-200 text-emerald-600 font-bold text-sm tracking-widest uppercase shadow-sm">
           <Book size={18} /><span>Cattle Encyclopedia</span>
         </div>
-        <h1 className="text-4xl md:text-5xl font-black text-white">Livestock <span className="text-emerald-500">Knowledge Base</span></h1>
-        <p className="text-slate-400 text-lg max-w-2xl mx-auto">Learn about the different characteristics, origins, and milk production capabilities of major globally recognized livestock breeds.</p>
+        <h1 className="text-4xl md:text-5xl font-black text-slate-800">Livestock <span className="text-emerald-500">Knowledge Base</span></h1>
+        <p className="text-slate-500 text-lg max-w-2xl mx-auto">Learn about the different characteristics, origins, and milk production capabilities of major globally recognized livestock breeds.</p>
       </header>
 
       <div className="flex justify-center space-x-4">
@@ -45,7 +45,7 @@ const Encyclopedia = () => {
            <button 
               key={tab} 
               onClick={() => setActiveTab(tab)} 
-              className={`px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm transition-all ${activeTab === tab ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+              className={`px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm transition-all ${activeTab === tab ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-white text-slate-500 hover:bg-gray-50 border border-slate-200 shadow-sm'}`}
            >
              {tab}s
            </button>
@@ -61,40 +61,40 @@ const Encyclopedia = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {CattleData[activeTab].map((breed, index) => (
-            <div key={index} className="glass-morphism rounded-3xl p-8 border border-white/5 hover:border-emerald-500/30 transition-colors group flex flex-col h-full">
+            <div key={index} className="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-200/50 hover:border-emerald-300 transition-colors group flex flex-col h-full">
               <div className="flex-grow">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-black text-white">{breed.breed}</h3>
-                  <span className="text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">{activeTab}</span>
+                  <h3 className="text-2xl font-black text-slate-800">{breed.breed}</h3>
+                  <span className="text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-emerald-100">{activeTab}</span>
                 </div>
                 
                 <div className="space-y-4 mb-6">
                   <div className="flex items-start space-x-3">
-                    <MapPin className="text-slate-500 mt-1 shrink-0" size={18} />
+                    <MapPin className="text-slate-400 mt-1 shrink-0" size={18} />
                     <div>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Origin</p>
-                      <p className="text-sm font-medium text-slate-300">{breed.origin}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Origin</p>
+                      <p className="text-sm font-medium text-slate-700">{breed.origin}</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Droplets className="text-slate-500 mt-1 shrink-0" size={18} />
+                    <Droplets className="text-emerald-400 mt-1 shrink-0" size={18} />
                     <div>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Milk Yield</p>
-                      <p className="text-sm font-medium text-emerald-400">{breed.milkProd}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Milk Yield</p>
+                      <p className="text-sm font-bold text-emerald-600">{breed.milkProd}</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Info className="text-slate-500 mt-1 shrink-0" size={18} />
+                    <Info className="text-blue-400 mt-1 shrink-0" size={18} />
                     <div>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Key Traits</p>
-                      <p className="text-sm font-medium text-slate-300">{breed.characteristics}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Key Traits</p>
+                      <p className="text-sm font-medium text-slate-700">{breed.characteristics}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-white/5">
-                <p className="text-xs text-slate-400 italic">" {breed.fact} "</p>
+              <div className="mt-6 pt-6 border-t border-slate-100">
+                <p className="text-sm text-slate-500 italic font-medium">" {breed.fact} "</p>
               </div>
             </div>
           ))}

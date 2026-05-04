@@ -5,17 +5,17 @@
 :root {
   --primary: #10b981;
   --primary-hover: #059669;
-  --bg-dark: #020617;
-  --card-dark: rgba(15, 23, 42, 0.8);
-  --text-light: #f8fafc;
-  --glass: rgba(15, 23, 42, 0.7);
+  --bg-light: #f3f4f6;
+  --card-light: #ffffff;
+  --text-dark: #1f2937;
+  --glass: rgba(255, 255, 255, 0.9);
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--bg-dark);
-  color: var(--text-light);
+  background-color: var(--bg-light);
+  color: var(--text-dark);
   font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
 }
 

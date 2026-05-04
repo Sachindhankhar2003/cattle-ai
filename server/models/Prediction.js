@@ -34,6 +34,15 @@ const PredictionSchema = new mongoose.Schema({
         characteristics: String,
         description: String
     },
+    imageHash: {
+        type: String,
+        required: false
+    },
+    imageQuality: {
+        animal_detected: Boolean,
+        lighting_sufficient: Boolean,
+        background_clutter: Boolean
+    },
     createdAt: {
         type: Date,
         default: Date.now
