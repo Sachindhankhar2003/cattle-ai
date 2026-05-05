@@ -120,7 +120,8 @@ const UploadSection = ({ onPredictionStart, onPredictionSuccess, onPredictionErr
         const filename = file.name && file.name.includes('.') ? file.name : `capture_${Date.now()}.jpg`;
         formData.append('image', file, filename);
 
-        const response = await fetch(`/api/prediction/predict/${species}`, {
+        const apiUrl = import.meta.env.VITE_API_URL || '';
+        const response = await fetch(`${apiUrl}/api/prediction/predict/${species}`, {
           method: 'POST',
           headers: { 'x-auth-token': token },
           body: formData
