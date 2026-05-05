@@ -75,8 +75,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
-      const apiUrl = import.meta.env.VITE_API_URL || '';
-      const res = await axios.get(`${apiUrl}/api/prediction/history`, { headers: { 'x-auth-token': token } });
+      const res = await axios.get(`/api/prediction/history`, { headers: { 'x-auth-token': token } });
       setHistory(res.data);
     } catch (err) {}
   };

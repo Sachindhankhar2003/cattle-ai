@@ -10,8 +10,7 @@ const History = () => {
     const fetchHistory = async () => {
       try {
         const token = localStorage.getItem('token');
-        const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await fetch(`${apiUrl}/api/prediction/history`, {
+        const response = await fetch(`/api/prediction/history`, {
           headers: { 'x-auth-token': token }
         });
         
